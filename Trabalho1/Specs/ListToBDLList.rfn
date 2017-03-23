@@ -1,0 +1,33 @@
+refinement<E>
+    Element is E
+
+    List[Element] is BDLList<E> {
+        make: --> List[Element]
+        is
+        BDLList();
+                
+        isEmpty: List[Element]
+        is
+        boolean isEmpty();
+          
+        addLast: List[Element] e:Element --> List[Element]
+        is
+        void add(E e);
+        
+        size: List[Element] --> int
+        is
+        int size();
+        
+        get: List[Element] index:int -->? Element 
+        is
+        E get(int index);
+        
+        set: List[Element] index:int e:Element -->? List[Element] 
+        is
+        void set(int index, E e);
+        
+        add: List[Element] index:int e:Element -->? List[Element] 
+        is
+        void add(int index, E e);   
+ 	}
+end refinement
