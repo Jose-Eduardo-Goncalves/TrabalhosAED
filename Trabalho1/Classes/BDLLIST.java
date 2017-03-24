@@ -1,6 +1,6 @@
 
 public class BDLLIST<T> implements Cloneable {
-	private static final int BSIZE;
+	private static final int BSIZE = 4;
 	private class Node<T> {
 		Block<T> bloco;
 		Node<T> next;
