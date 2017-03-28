@@ -6,7 +6,7 @@
 public class BDLList<E> implements Cloneable, Iterable<E> {
 	private static final int BSIZE = 8;
 	/**
-	 * Cria um no contendo um bloco e duas referencias,
+	 * Cria um noh contendo um bloco e duas referencias,
 	 * uma para o noh anterior e outra para o proximo
 	 * @param <E> Tipo de elementos nesta lista
 	 */
