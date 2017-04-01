@@ -1,10 +1,12 @@
+import java.util.Iterator;
+
 /**
  * Esta classe implementa uma lista de blocos duplamente ligada
  * @author Jose Goncalves (Numero 49457) Sergio Batalha (Numero 49473)
  * @param <E> Tipo de elementos nesta lista
  */
-public class BDLList<E> implements Cloneable {
-    private static final int BSIZE = 1;
+public class BDLList<E> implements Cloneable, Iterable<E> {
+    private static final int BSIZE = 10;
     /**
      * Cria um noh contendo um bloco e duas referencias,
      * uma para o noh anterior e outra para o proximo
@@ -81,7 +83,7 @@ public class BDLList<E> implements Cloneable {
      * @requires 0 <= index < size()
      */
     public E get (int index) {
-        if (index < BSIZE + 1) {
+        if (index <= BSIZE) {
             return first.bloco.get(index);
          } else {
             int indiceBloco = index % (BSIZE + 1);
@@ -97,47 +99,71 @@ public class BDLList<E> implements Cloneable {
      *          0 <= index < size ()
      */
     public void set (int index, E e) {
-        int indiceBloco = index % (BSIZE + 1);
-        if (index < BSIZE + 1) {
+        if (index <= BSIZE) {
             first.bloco.set(index, e);
         } else {
+            int indiceBloco = index % (BSIZE + 1);
             noh(index).bloco.set(indiceBloco, e);
         }
     }
+    public Iterator<E> iterator () {
+        return new IteradorLista();
+    }
+    private class IteradorLista implements Iterator<E>{
+        private Node<E> current;
+        private int indexBloco;
+        private IteradorLista () {
+            current = first.next;
+            indexBloco = -1;
+        }
+        public boolean hasNext () {
+            boolean resultado;
+            if (indexBloco < BSIZE) {
+                resultado = first.bloco.get(indexBloco + 1) != null;
+                indexBloco++;
+            } else {
+                resultado = noh(indexBloco).bloco.get(indexBloco % (BSIZE + 1)) != null;
+                indexBloco++;
+            }
+            return resultado;
+        }
+        public E next () {
+            return null;
+        }
+    }
+    
     /**
      * Calcula qual o noh a que pertence
      * o indice da posicao do elemento
      * requesitado no metodo get (index)
      * @param index O indice de posicao
      * @return O noh onde esta o elemento
-     * @requires index >= 0
+     * @requires index > BSIZE
      */
     private Node<E> noh (int index) {
         //Numero de nos ate a posicao requesitada
         int nosAPercorrer = numeroNos (index);
-        Node<E> referencia = first.next;
-        //Comeca em i = 2 porque a variavel 
-        //referencia ja contem o enderenco
-        //do segundo noh
-        for (int i = 2; i < nosAPercorrer; i++) {
+        Node<E> referencia = first;
+        for (int i = 0; i < nosAPercorrer; i++) {
             referencia = referencia.next;
         }
         return referencia;
     }
     /**
-     * Calcula quantos nos tem que percorrer
+     * Calcula quantos nos tem que se percorrer
      * para chegar aquele que contem o indice
      * requesitado
      * @param index O index a ser procurado
      * @return O numero de nos ate ao noh
      * que contem o indice index
-     * @requires index >= 0
+     * @requires index > BSIZE
      */
     private static int numeroNos (int index) {
-        if (index % BSIZE == 0) {
-            return index / BSIZE;
+        int numero = index / (BSIZE + 1);
+        if (numero == 0) {
+            return 1;
         } else {
-            return index / BSIZE + 1;
+            return numero;
         }
     }
 }
