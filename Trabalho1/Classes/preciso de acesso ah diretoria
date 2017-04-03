@@ -1,0 +1,170 @@
+import java.util.Iterator;
+
+/**
+ * Esta classe implementa uma lista de blocos duplamente ligada
+ * @author Jose Goncalves (Numero 49457) Sergio Batalha (Numero 49473)
+ * @param <E> Tipo de elementos nesta lista
+ */
+public class BDLList<E> implements Cloneable {
+    private static final int BSIZE = 1;
+    /**
+     * Cria um noh contendo um bloco e duas referencias,
+     * uma para o noh anterior e outra para o proximo
+     * @param <E> Tipo de elementos nesta lista
+     */
+    private static class Node<E> {
+        private Block<E> bloco;
+        private Node<E> next;
+        private Node<E> previous;
+        /**
+         * Constroi um novo noh
+         * @param next Referencia para o proximo noh
+         * @param previous Referencia para o noh anterior
+         */
+        private Node(Node<E> next, Node<E> previous) {
+            bloco = new Block<E>(BSIZE + 1);
+            this.next = next;
+            this.previous = previous;
+        }
+    }
+    private int size;
+    private Node<E> first;
+    private Node<E> last;
+    /**
+     * Constroi uma lista vazia duplamente ligada com blocos 
+     */
+    public BDLList () {
+        first = new Node<E>(null,null);
+        last = first;
+    }
+    /**
+     * Verifica se uma dada lista 
+     * esta vazia
+     * @return True se estiver vazia, 
+     * false caso contrario.
+     */
+    public boolean isEmpty () {
+        return size == 0;
+    }
+    /**
+     * Adiciona um elemento ao final da lista
+     * @param e Elemento a adicionar ao fim 
+     * da lista
+     * @requires e != null
+     */
+    public void add (E e) {
+        if (isEmpty()) {
+            first.bloco.addFirst(e);
+            size++;
+        } else if (!last.bloco.isFull()) {
+            last.bloco.addLast(e);
+            size++;
+        } else {
+            last.next = new Node<E> (last, null);
+            last = last.next;
+            last.bloco.addFirst(e);
+            size++;
+        }
+    }
+    /**
+     * Retorna quantos elementos estao nesta
+     * lista
+     * @return Numero de elementos na lista
+     */
+    public int size () {
+        return size;
+    }
+    /**
+     * Devolve o elemento que esta na posicao
+     * index da lista
+     * @param index Posicao do elemento a 
+     * retornar
+     * @return O elemento na posicao index
+     * @requires 0 <= index < size()
+     */
+    public E get (int index) {
+        Par elemento = new Par(index);
+        return elemento.bloco.bloco.get(elemento.index);
+    }
+    /**
+     * Coloca um dado elemento numa 
+     * dada posicao da lista
+     * @param index A posicao da lista
+     * @param e O elemento a colocar
+     * @requires index >= 0 && e != null &&
+     *          0 <= index < size ()
+     */
+    public void set (int index, E e) {
+        Par elemento = new Par(index);
+    	elemento.bloco.bloco.set(elemento.index, e);
+    }
+    
+    private class Par{
+    	private int index;
+    	private Node<E> bloco;
+    	
+    	public Par(int index){
+    		this.index = index(index, first);
+    		this.bloco = bloco(index, first);
+    	}
+    	
+    	/**
+         * Calcula o indice do elemento dentro
+         * do noh onde se encontra
+         * @param index O index a ser procurado
+         * @param noh o noh por onde comessa a procura
+         * @return O index do elemento
+         * @requires index >= 0, noh != null
+         */
+        private int index(int index, Node<E> noh) {
+            if(index < BSIZE+1){
+    			if(index < noh.bloco.size() ){
+    				this.index = index;
+    			} else {
+    				return index(index-noh.bloco.size()+1, noh.next);
+    			}
+    		}
+        }
+    	
+        /**
+         * Calcula qual o noh a que pertence
+         * o indice da posicao do elemento
+         * @param index O indice de posicao
+         * @param noh o noh por onde comessa a procura
+         * @return O noh onde esta o elemento
+         * @requires index >= 0, noh != null
+         */
+        private Node<E> bloco (int index, Node<E> noh) {
+        	if(index < BSIZE+1){
+    			if(index < noh.bloco.size() ){
+    				bloco = noh;
+    			} else {
+    				return bloco(index-noh.bloco.size()+1, noh.next);
+    			}
+    		}
+        }
+    }
+	
+	public Iterator<E> iterador(){
+		return new BDLListIterador();
+	}
+	
+	private class BDLListIterador implements Iterator<E>{
+		private Node<E> noh;
+		private int index;
+		private BDLListIterador(){
+			index = -1;
+			noh = first;
+		}
+		
+		public boolean hasNext(){
+			return get(index+1) != null;
+		}
+		
+		public E next(){
+			index++;
+			return get(index);
+		}
+		
+	}
+}
